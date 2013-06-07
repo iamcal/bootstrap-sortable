@@ -10,15 +10,35 @@
     // set attributes needed for sorting
     $('table.sortable').each(function () {
       var $this = $(this);
-      $this.find('thead th').each(function (index) { $(this).attr('data-sortkey', index); });
-      $this.find('th,td').each(function () { var $this = $(this); $this.attr('data-value') === undefined && $this.attr('data-value', $this.text()); });
-      $this.find('thead th').each(function (index) { var $this = $(this); bsSort[index] = $this.attr('data-defaultsort'); if(bsSort[index] != null){bsSort[index] = bsSort[index] == 'asc' ? 'desc' : 'asc'; $this.click(); }});
+      $this.find('thead th').each(function (index) {
+        var $this = $(this);
+        $this.attr('data-sortkey') === undefined && $(this).attr('data-sortkey', index);
+      });
+      $this.find('th,td').each(function () {
+        var $this = $(this);
+        $this.attr('data-value') === undefined && $this.attr('data-value', $this.text());
+      });
+      $this.find('thead th').each(function (index) {
+        var $this = $(this);
+        var a = $this.attr('data-defaultorder');
+        var b = $this.attr('data-defaultsort');
+        var idx = $this.attr('data-sortkey');
+        if(a != null){
+          bsSort[idx] = a == 'asc' ? 'desc' : 'asc';
+        }
+        if(b != null){
+          bsSort[idx] = b == 'asc' ? 'desc' : 'asc';
+          $this.click();
+        }
+      });
     });
   };
 
   // add click event to table header
   $document.on('click', 'table.sortable thead th', function (e) {
     var $this = $(this), $table = $this.parents('table.sortable');
+
+    if ($this.hasClass('no-sort')) return;
 
     // update arrow icon
     $table.find('span.arrow').remove();
